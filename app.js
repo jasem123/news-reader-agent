@@ -24,12 +24,12 @@ const news = [
     summary: "More people are using AI tools for work and learning.",
   },
 ];
-function showNews() {
+function showNews(article) {
   const newsContainer = document.getElementById("news-container");
 
   newsContainer.innerHTML = "";
 
-  news.forEach((article) => {
+  article.forEach((article) => {
     newsContainer.innerHTML += `
       <h3>${article.title}</h3>
       <p><strong>Source:</strong> ${article.source}</p>
@@ -37,13 +37,13 @@ function showNews() {
     `;
   });
 }
-showNews();
+// showNews(news);
 
 const searchBtn = document.getElementById("search-btn");
 const topicInput = document.getElementById("topic-input");
 
 searchBtn.addEventListener("click", () => {
-  const topic = topicInput.value.toLowerCase();
+  const topic = topicInput.value.trim().toLowerCase();
   const filteredNews = news.filter((article) => article.topic === topic);
   showNews(filteredNews);
 });
