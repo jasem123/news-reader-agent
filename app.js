@@ -31,14 +31,26 @@ const news = [
 const API_KEY = "c4154f0ffe1630212accf371a7b7b505"; // Replace with your actual API key
 
 async function getNews(topic = "technology") {
-  // Fetch news articles from the GNews API
-  const url = `https://gnews.io/api/v4/search?q=${topic}&lang=en&max=5&apikey=${API_KEY}`;
+  try {
+    // Fetch news articles from the GNews API
+    const url = `https://gnews.io/api/v4/search?q=${topic}&lang=en&max=5&apikey=${API_KEY}`;
 
-  const response = await fetch(url);
-  const data = await response.json();
+    const response = await fetch(url);
 
-  // Return the articles from the API response
-  return data.articles;
+    if (!response.ok) {
+      throw new Error(`HTTP error ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    return data.articles || [];
+  } catch (error) {
+    console.error("Failed to fetch news:", error);
+    const newsContainer = document.getElementById("news-container");
+    newsContainer.innerHTML =
+      "<p>Something went wrong loading news. Please try again later.</p>";
+    return [];
+  }
 }
 
 // Show news articles on the page
@@ -53,7 +65,7 @@ function showNews(articles) {
 
   articles.forEach((article) => {
     newsContainer.innerHTML += `
-      <div class="article">
+      <div class="article-card">
         <h3>${article.title}</h3>
         <p><strong>Source:</strong> ${article.source.name}</p>
         <p><strong>Summary:</strong> ${article.description}</p>
@@ -67,7 +79,12 @@ function showNews(articles) {
 const searchBtn = document.getElementById("search-btn");
 const topicInput = document.getElementById("topic-input");
 
+// Load news articles when the page first opens
 async function loadNews() {
+  // Show a loading message while fetching news
+  const newsContainer = document.getElementById("news-container");
+  newsContainer.innerHTML = "<p>Loading news ...</p>";
+
   // Get all news articles
   const article = await getNews("technology");
   // Show all news when the page first opens
@@ -79,6 +96,9 @@ loadNews();
 async function searchNews() {
   // Get user input, remove spaces, and make it lowercase
   const topic = topicInput.value.trim().toLowerCase();
+  // Show a loading message while fetching news
+  const newsContainer = document.getElementById("news-container");
+  newsContainer.innerHTML = "<p>Loading news ...</p>";
 
   // Get all news articles
   const article = await getNews(topic);
