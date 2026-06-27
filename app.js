@@ -28,32 +28,37 @@ const news = [
   },
 ];
 
-async function getNews() {
-  // This function will eventually fetch news from an API
-  // For now, it just returns the fake news data
-  return news;
+const API_KEY = "c4154f0ffe1630212accf371a7b7b505"; // Replace with your actual API key
+
+async function getNews(topic = "technology") {
+  // Fetch news articles from the GNews API
+  const url = `https://gnews.io/api/v4/search?q=${topic}&lang=en&max=5&apikey=${API_KEY}`;
+
+  const response = await fetch(url);
+  const data = await response.json();
+
+  // Return the articles from the API response
+  return data.articles;
 }
 
 // Show news articles on the page
-function showNews(article) {
+function showNews(articles) {
   const newsContainer = document.getElementById("news-container");
-
-  // Clear old news before showing new results
   newsContainer.innerHTML = "";
 
-  // If no articles are found, show a message
-  if (article.length === 0) {
+  if (articles.length === 0) {
     newsContainer.innerHTML = "<p>No articles found for this topic.</p>";
     return;
   }
 
-  // Loop through each article and add it to the page
-  article.forEach((article) => {
+  articles.forEach((article) => {
     newsContainer.innerHTML += `
-      <h3>${article.title}</h3>
-      <p><strong>Topic:</strong> ${article.topic}</p>
-      <p><strong>Source:</strong> ${article.source}</p>
-      <p>${article.summary}</p>
+      <div class="article">
+        <h3>${article.title}</h3>
+        <p><strong>Source:</strong> ${article.source.name}</p>
+        <p><strong>Summary:</strong> ${article.description}</p>
+        <p><a href="${article.url}" target="_blank">Read more</a></p>
+      </div>
     `;
   });
 }
@@ -64,9 +69,9 @@ const topicInput = document.getElementById("topic-input");
 
 async function loadNews() {
   // Get all news articles
-  const allNews = await getNews();
+  const article = await getNews("technology");
   // Show all news when the page first opens
-  showNews(allNews);
+  showNews(article);
 }
 loadNews();
 
@@ -76,21 +81,20 @@ async function searchNews() {
   const topic = topicInput.value.trim().toLowerCase();
 
   // Get all news articles
-  const allNews = await getNews();
+  const article = await getNews(topic);
 
   // If the input is empty, show all news
   if (topic === "") {
-    showNews(allNews);
     return;
   }
 
   // Keep only articles with the same topic
-  const filteredNews = allNews.filter((article) =>
-    article.topic.includes(topic),
-  );
+  // const filteredNews = article.filter((article) =>
+  // article.topic.includes(topic),
+  // );
 
   // Show the filtered news on the page
-  await showNews(filteredNews);
+  // await showNews(filteredNews);
 }
 
 searchBtn.addEventListener("click", searchNews);
