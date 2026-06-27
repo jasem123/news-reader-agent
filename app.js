@@ -4,6 +4,8 @@ const newsContainer = document.getElementById("news-container");
 
 newsContainer.innerHTML = newsTitle;*/
 
+console.log("app.js is connected");
+
 // Fake news data for testing before using a real API
 const news = [
   {
@@ -25,6 +27,12 @@ const news = [
     summary: "More people are using AI tools for work and learning.",
   },
 ];
+
+async function getNews() {
+  // This function will eventually fetch news from an API
+  // For now, it just returns the fake news data
+  return news;
+}
 
 // Show news articles on the page
 function showNews(article) {
@@ -50,29 +58,39 @@ function showNews(article) {
   });
 }
 
-// Show all news when the page first opens
-showNews(news);
-
 // Get HTML elements from the page
 const searchBtn = document.getElementById("search-btn");
 const topicInput = document.getElementById("topic-input");
 
+async function loadNews() {
+  // Get all news articles
+  const allNews = await getNews();
+  // Show all news when the page first opens
+  showNews(allNews);
+}
+loadNews();
+
 // When the user clicks Search, filter news by topic
-function searchNews() {
+async function searchNews() {
   // Get user input, remove spaces, and make it lowercase
   const topic = topicInput.value.trim().toLowerCase();
 
+  // Get all news articles
+  const allNews = await getNews();
+
   // If the input is empty, show all news
   if (topic === "") {
-    showNews(news);
+    showNews(allNews);
     return;
   }
 
   // Keep only articles with the same topic
-  const filteredNews = news.filter((article) => article.topic.includes(topic));
+  const filteredNews = allNews.filter((article) =>
+    article.topic.includes(topic),
+  );
 
   // Show the filtered news on the page
-  showNews(filteredNews);
+  await showNews(filteredNews);
 }
 
 searchBtn.addEventListener("click", searchNews);
