@@ -7,7 +7,7 @@ newsContainer.innerHTML = newsTitle;*/
 console.log("app.js is connected");
 
 // Fake news data for testing before using a real API
-const news = [
+/*const news = [
   {
     title: "Liverpool wins an important match",
     topic: "football",
@@ -26,7 +26,7 @@ const news = [
     source: "Tech News",
     summary: "More people are using AI tools for work and learning.",
   },
-];
+];*/
 
 const API_KEY = "c4154f0ffe1630212accf371a7b7b505"; // Replace with your actual API key
 
@@ -53,6 +53,17 @@ async function getNews(topic = "technology") {
   }
 }
 
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 // Show news articles on the page
 function showNews(articles) {
   const newsContainer = document.getElementById("news-container");
@@ -64,10 +75,14 @@ function showNews(articles) {
   }
 
   articles.forEach((article) => {
+    const imageUrl = article.image || "https://via.placeholder.com/150"; // Use a placeholder image if none is provided
+
     newsContainer.innerHTML += `
       <div class="article-card">
+        <img src="${imageUrl}" alt="${article.title}" class="article-image" />
         <h3>${article.title}</h3>
         <p><strong>Source:</strong> ${article.source.name}</p>
+        <p><strong>Date:</strong> ${formatDate(article.publishedAt)}</p>
         <p><strong>Summary:</strong> ${article.description}</p>
         <p><a href="${article.url}" target="_blank">Read more</a></p>
       </div>

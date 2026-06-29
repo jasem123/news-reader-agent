@@ -38,3 +38,10 @@ button {
   display: inline-block;
   margin-top: 10px;
 }
+.article-image {
+  width: 100%;
+  max-height: 250px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
